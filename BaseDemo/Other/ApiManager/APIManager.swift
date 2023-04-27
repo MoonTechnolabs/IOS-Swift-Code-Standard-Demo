@@ -12,99 +12,105 @@ class APIManager: NSObject {
     
     static let shared = APIManager()
     var encoding: ParameterEncoding! = JSONEncoding.default
-    //TODO: - get Api
-    func callGetApi(url:String, parameter:[String:Any], header: [String: String]? , dataResponse:@escaping ([String:Any], _ error:Error?)->()){
+    
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
+    
+    //MARK: - get Api
+    func callGetApi<model: Decodable>(url: String, parameter:[String:Any]? = nil, header: HTTPHeaders? = nil, model: model.Type, completion: @escaping (_ isSuccess: Bool, _ msg: String, _ result: model?) -> Void) {
+        
         if !isConnectedToNetwork() {
-            let error = NSError(domain: "", code: 505, userInfo: [NSLocalizedDescriptionKey : "Internet connection not available"])
-            dataResponse([:],error)
+            completion(false, "Internet connection not available", nil)
             return
         }
-        let bearerToken = getMyUserDefaults(key: MyUserDefaults.bearerToken)
-        let header : HTTPHeaders = ["Authorization":"Bearer \(bearerToken)",
-                                    "Accept": "application/json"
-        ]
-        AF.request(url, method: .get, parameters: parameter, encoding: encoding, headers: header).responseString {  response in
+        
+        var headers = header
+        if header == nil {
+            headers = ["Content-Type": "application/json",
+                       "version": "2"]
+        }
+        
+        AF.request(url, method: .get, parameters: parameter, encoding: encoding, headers: headers).responseDecodable(decoder: decoder) { (response: DataResponse<Model_APIResponse<model>, AFError>) in
+            
             switch response.result {
             case .success(let res):
-                if let code = response.response?.statusCode{
+                if let code = response.response?.statusCode {
                     if code == 200 {
-                            let data = res.data(using: .utf8)!
-                            do {
-                                if let JSON = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:Any] {
-                                    print(JSON) // use the json here
-                                    dataResponse(JSON,nil)
-                                } else {
-                                    print("bad json")
-                                    // MARK: SHOW error alert
-                                    dataResponse([:],nil)
-                                }
-                            } catch let error as NSError {
-                                print(error)
-                                dataResponse([:],error)
-                            }
+                        if res.success ?? false {
+                            completion(true, res.msg ?? "", res.result)
+                        } else {
+                            completion(false, res.msg ?? "", nil)
+                        }
+                    } else if code == 401 {
+                        completion(false, res.msg ?? "", nil)
+                    } else {
+                        completion(false, res.msg ?? "", nil)
                     }
+                } else {
+                    completion(false, "Status code not found!", nil)
                 }
             case .failure(let error):
-                dataResponse([:],error)
+                completion(false, error.localizedDescription, nil)
                 break
             }
         }
     }
-    //TODO: - Post Api
-    func callPostApi(url:String, parameter:[String:Any]? , header: HTTPHeaders? , dataResponse:@escaping ([String:Any], _ error:Error?)->()){
+    //MARK: - Post Api
+    func callPostApi<model: Decodable>(url: String, parameter: [String:Any]?, header: HTTPHeaders? = nil, model: model.Type, completion: @escaping (_ isSuccess: Bool, _ msg: String, _ result: model?) -> Void) {
+        
         if !isConnectedToNetwork() {
-            let error = NSError(domain: "", code: 505, userInfo: [NSLocalizedDescriptionKey : "Internet connection not available"])
-            dataResponse([:],error)
+            completion(false, "Internet connection not available", nil)
             return
         }
+        
         var headers = header
         if header == nil {
-            let bearerToken = getMyUserDefaults(key: MyUserDefaults.bearerToken)
             headers = ["Content-Type": "application/json",
                        "version": "2"]
         }
-        AF.request(url, method: .post, parameters: parameter, encoding: encoding, headers: headers).responseString  {  response in
+        
+        AF.request(url, method: .post, parameters: parameter, encoding: encoding, headers: headers).responseDecodable(decoder: decoder) { (response: DataResponse<Model_APIResponse<model>, AFError>) in
+            
             switch response.result {
             case .success(let res):
-                if let code = response.response?.statusCode{
+                if let code = response.response?.statusCode {
                     if code == 200 {
-                            let data = res.data(using: .utf8)!
-                            do {
-                                if let JSON = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:Any] {
-                                    print(JSON) // use the json here
-                                    dataResponse(JSON,nil)
-                                } else {
-                                    print("bad json")
-                                    // MARK: SHOW error alert
-                                    dataResponse([:],nil)
-                                }
-                            } catch let error as NSError {
-                                print(error)
-                                dataResponse([:],error)
-                            }
+                        if res.success ?? false {
+                            completion(true, res.msg ?? "", res.result)
+                        } else {
+                            completion(false, res.msg ?? "", nil)
+                        }
+                    } else if code == 401 {
+                        completion(false, res.msg ?? "", nil)
+                    } else {
+                        completion(false, res.msg ?? "", nil)
                     }
+                } else {
+                    completion(false, "Status code not found!", nil)
                 }
             case .failure(let error):
-                dataResponse([:],error)
+                completion(false, error.localizedDescription, nil)
                 break
             }
         }
     }
     //MARK: - Post API call with image upload
-    func callPostWithImage(url:String, image: UIImage, parameters:[String:Any] , header: HTTPHeaders?, dataResponse:@escaping ([String:Any], _ error:Error?)->()) {
+    func callPostWithImage<model: Decodable>(url:String, image: UIImage, parameters:[String:Any] , header: HTTPHeaders?, model: model.Type, completion: @escaping (_ isSuccess: Bool, _ msg: String, _ result: model?) -> Void) {
+        
         if !isConnectedToNetwork() {
-            let error = NSError(domain: "", code: 505, userInfo: [NSLocalizedDescriptionKey : "Internet connection not available"])
-            dataResponse([:],error)
+            completion(false, "Internet connection not available", nil)
             return
         }
-        var headers = HTTPHeaders()
+        
+        var headers = header
         if header == nil {
-            let bearerToken = getMyUserDefaults(key: MyUserDefaults.bearerToken)
-            headers = ["Authorization":"Bearer \(bearerToken)",
-                       "Accept": "application/json",
-                       "Content-Type": "application/json"
-            ]
+            headers = ["Content-Type": "application/json",
+                       "version": "2"]
         }
+        
         AF.upload(multipartFormData: { multipartFormData in
             if let imageData = image.jpegData(compressionQuality: 0.75){
                 multipartFormData.append(imageData, withName: "image", fileName: "image.png", mimeType: "image/png")
@@ -118,22 +124,27 @@ class APIManager: NSObject {
                     multipartFormData.append(valueAsData, withName: key )
                 }
             }
-        }, to: url, method: .post, headers: headers).responseData {  response in
+        }, to: url, method: .post, headers: headers).responseDecodable(decoder: decoder) { (response: DataResponse<Model_APIResponse<model>, AFError>) in
+            
             switch response.result {
-            case .success(let data):
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data) as? [String:Any] {
-                        print("API Response\n\(json)")
-                        dataResponse(json,nil)
-                    }else {
+            case .success(let res):
+                if let code = response.response?.statusCode {
+                    if code == 200 {
+                        if res.success ?? false {
+                            completion(true, res.msg ?? "", res.result)
+                        } else {
+                            completion(false, res.msg ?? "", nil)
+                        }
+                    } else if code == 401 {
+                        completion(false, res.msg ?? "", nil)
+                    } else {
+                        completion(false, res.msg ?? "", nil)
                     }
-                } catch {
-                    
-                    print("Error while decoding response: \(error.localizedDescription) from: \(String(describing: String(data: data, encoding: .utf8)))")
-                    dataResponse([:],error)
+                } else {
+                    completion(false, "Status code not found!", nil)
                 }
             case .failure(let error):
-                dataResponse([:],error)
+                completion(false, error.localizedDescription, nil)
                 break
             }
         }

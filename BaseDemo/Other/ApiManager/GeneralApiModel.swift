@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Model_APIResponse<M:Codable> : Codable {
+struct Model_APIResponse<M:Decodable> : Decodable {
     
     private enum CodingKeys: String, CodingKey { case success, result, msg }
     let result : M?

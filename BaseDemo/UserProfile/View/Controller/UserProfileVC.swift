@@ -8,6 +8,7 @@
 import UIKit
 
 class UserProfileVC: UIViewController {
+    
     //MARK: - Outlet and veriable declaration
     @IBOutlet weak var lblUserName: UILabel!
     @IBOutlet weak var lblEmail: UILabel!
