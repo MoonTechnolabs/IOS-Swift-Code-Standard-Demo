@@ -19,7 +19,7 @@ After many iterations and a little bit of though, here's a general overview of h
 ## Result
 At the end it ends up looking something like this:
 
-![Xcode Screenshot](https://github.com/jlnbuiles/file-structure/blob/master/FileStructure/Resources/Xcode%20Screenshot.png "Xcode side bar screenshot")
+![Xcode Screenshot](https://github.com/MoonTechnolabs/IOS-Swift-Code-Standard-Demo/blob/main/readmeAssets/file.png "Xcode side bar screenshot")
 
 # Naming Conventions
 ## Class Names:
