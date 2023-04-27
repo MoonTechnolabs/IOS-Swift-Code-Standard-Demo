@@ -23,19 +23,26 @@ class APIManager: NSObject {
         let header : HTTPHeaders = ["Authorization":"Bearer \(bearerToken)",
                                     "Accept": "application/json"
         ]
-        AF.request(url, method: .get, parameters: parameter, headers: header).responseData {  response in
+        AF.request(url, method: .get, parameters: parameter, encoding: encoding, headers: header).responseString {  response in
             switch response.result {
-            case .success(let data):
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data) as? [String:Any] {
-                        print("API Response\n\(json)")
-                        dataResponse(json,nil)
-                    }else {
+            case .success(let res):
+                if let code = response.response?.statusCode{
+                    if code == 200 {
+                            let data = res.data(using: .utf8)!
+                            do {
+                                if let JSON = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:Any] {
+                                    print(JSON) // use the json here
+                                    dataResponse(JSON,nil)
+                                } else {
+                                    print("bad json")
+                                    // MARK: SHOW error alert
+                                    dataResponse([:],nil)
+                                }
+                            } catch let error as NSError {
+                                print(error)
+                                dataResponse([:],error)
+                            }
                     }
-                } catch {
-                    
-                    print("Error while decoding response: \(error.localizedDescription) from: \(String(describing: String(data: data, encoding: .utf8)))")
-                    dataResponse([:],error)
                 }
             case .failure(let error):
                 dataResponse([:],error)
