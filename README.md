@@ -10,7 +10,7 @@ After many iterations and a little bit of though, here's a general overview of h
     * **Auth** - ViewController related to Auth
   * **ViewModel** - ViewModel folder
     * **ViewModel** - All ViewModel Files and logic related to Auth
-* **Others** - Contain APIManager, Helper, Extention and Contant Logic
+* **Others** - Contain APIManager, Helper, Extention and related Logic
   * **Extentions** - All types of extention like UIView, String, Bundle, UIViewController etc.
   * **Helper** - Repeated usefull logic like Network Handler, UserDefault, object of all StoryBoard, Contant message, Static color etc.
   * **APIManager** - Common class for handle all types of api like POST, GET, PUT etc. WebURL class for add all api constant endpoint. Common api model for handle all api response.
