@@ -59,6 +59,62 @@ let str = obj.Username ?? ""
  if let str = obj.Username as? String {
  }
 ```
+## Info.plist Permission
+
+* **NSPhotoLibraryAddUsageDescription:** Your app adds photos to the user's photo library
+```
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSPhotoLibraryUsageDescription:** Your app accesses the user's photo library
+```
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSCameraUsageDescription:** Your app uses the device camera
+```
+<key>NSCameraUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSLocationAlwaysUsageDescription:** Your app uses location services all the time
+```
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSLocationWhenInUseUsageDescription:** 	Your app uses location services only when the app is running
+```
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSMicrophoneUsageDescription	:** Your app uses the device microphone
+```
+<key>NSMicrophoneUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSFaceIDUsageDescription	:** Your app uses FaceID
+```
+<key>NSFaceIDUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NFCReaderUsageDescription	:** Your app uses the NFC reader
+```
+<key>NFCReaderUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
+* **NSContactsUsageDescription	:** Your app uses the address book
+```
+<key>NSContactsUsageDescription</key>
+<string>Example: You should fill this in</string>
+```
+
 ## Don’t Repeat Yourself
 Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.
 
