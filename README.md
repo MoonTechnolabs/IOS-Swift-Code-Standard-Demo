@@ -1,7 +1,7 @@
 # IOS-Swift-Code-Standard-Demo
 
 ## Structure
-After many iterations and a little bit of though, here's a general overview of how I usually organize my projects' file hierarchy:
+After many iterations and a little bit of though, here's a general overview of how we usually organize our projects' file hierarchy:
 * **Appdelegate** - Contain Appdelete File
 * **Auth** - Contain Model, View, ViewModel Folders related to Auth
   * **Model** - All models related to Auth (server-side entities' representation). Use codable model class.
