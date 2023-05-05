@@ -18,7 +18,6 @@ class LoginViewModel {
         APIManager.shared.callPostApi(url: WebURL.login, parameter: param, model: ModelUserDetail.self) { isSuccess, msg, result in
             
             if isSuccess {
-                setMyUserDefaults(value: result?.accessToken ?? "" , key: MyUserDefaults.bearerToken)
                 setUserInfo(objUserInfo: result!)
                 //MARK: - Set Root controller here
                 appDelegate.setHomeRoot()

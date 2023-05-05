@@ -21,8 +21,9 @@ class UserProfileVC: UIViewController {
 extension UserProfileVC {
     func initializer() {
         let userDetail = getUserInfo()
-        self.lblUserName.text = userDetail?.username
-        self.lblEmail.text = userDetail?.email
+        // Set user detail from user default
+//        self.lblUserName.text = userDetail?.username
+//        self.lblEmail.text = userDetail?.email
     }
 }
 //MARK: - Click Event
